@@ -76,9 +76,11 @@ if __name__ == '__main__':
         # remove pattern prefix from current_semver to compare with largest
         current_semver = current_semver.split(pattern)[1]
 
+        print("current_semver: {0}".format(current_semver))
+        print("default_semver: {0}".format(default_semver))
         if current_semver >= default_semver:
             print('Xcode version more recent! aborting.')
-        else if current_semver == default_semver:
+        elif current_semver == default_semver:
             print('Xcode version unchanged! aborting.')
         else:
             print('New Xcode version available: {0} ... updating bitrise.yml!'.format(default_semver))
