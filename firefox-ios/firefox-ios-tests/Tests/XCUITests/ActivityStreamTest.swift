@@ -12,7 +12,7 @@ let newTopSite = [
     "topSiteLabel": "Mozilla",
     "bookmarkLabel": "Mozilla - Internet for people, not profit (US)"
 ]
-let allDefaultTopSites = ["Pinned: Google", "Facebook", "YouTube", "Amazon", "Wikipedia", "X"]
+let allDefaultTopSites = ["Facebook", "YouTube", "Amazon", "Wikipedia", "X"]
 
 class ActivityStreamTest: BaseTestCase {
     typealias TopSites = AccessibilityIdentifiers.FirefoxHomepage.TopSites
@@ -32,7 +32,8 @@ class ActivityStreamTest: BaseTestCase {
                                LaunchArguments.SkipContextualHints,
                                LaunchArguments.DisableAnimations]
         }
-        // launchArguments.append(LaunchArguments.SkipAddingGoogleTopSite)
+        launchArguments.append(LaunchArguments.SkipAddingGoogleTopSite)
+        // https://mozilla-hub.atlassian.net/browse/FXIOS-11668
         // launchArguments.append(LaunchArguments.SkipSponsoredShortcuts)
         super.setUp()
     }
@@ -110,7 +111,7 @@ class ActivityStreamTest: BaseTestCase {
         navigator.performAction(Action.OpenNewTabFromTabTray)
         let topSitesCells = app.collectionViews.links["TopSitesCell"]
         waitForExistence(topSitesCells.staticTexts[newTopSite["bookmarkLabel"]!], timeout: TIMEOUT_LONG)
-        checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 7)
+        checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 6)
         topSitesCells.staticTexts[newTopSite["bookmarkLabel"]!].press(forDuration: 1)
         selectOptionFromContextMenu(option: "Pin")
         waitForExistence(topSitesCells.staticTexts[newTopSite["bookmarkLabel"]!], timeout: TIMEOUT_LONG)
@@ -122,7 +123,7 @@ class ActivityStreamTest: BaseTestCase {
         navigator.performAction(Action.AcceptClearPrivateData)
         navigator.goto(HomePanelsScreen)
         waitForExistence(topSitesCells.staticTexts[newTopSite["bookmarkLabel"]!])
-        checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 7)
+        checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 6)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2272514
@@ -143,7 +144,7 @@ class ActivityStreamTest: BaseTestCase {
         }
         mozWaitForElementToExist(allTopSites.staticTexts[topSiteSecondCell])
         mozWaitForElementToNotExist(allTopSites.staticTexts[topSiteFirstCell])
-        checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 5)
+        checkNumberOfExpectedTopSites(numberOfExpectedTopSites: 4)
         // Check top site in first cell now
         let updatedAllTopSites = app.collectionViews.links.matching(identifier: "TopSitesCell")
         waitForExistence(updatedAllTopSites.element(boundBy: 0))
