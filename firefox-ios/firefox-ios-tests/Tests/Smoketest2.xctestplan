@@ -146,6 +146,7 @@
         "SiteLoadTest",
         "SyncUITests",
         "TabCounterTests",
+        "TabTests",
         "TabTrayTests",
         "TabTrayTests\/testAccessibility()",
         "TabsPerformanceTest",

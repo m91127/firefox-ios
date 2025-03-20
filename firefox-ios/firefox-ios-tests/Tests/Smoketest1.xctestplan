@@ -251,6 +251,7 @@
         "SyncUITests\/testTypeOnGivenFields()",
         "SyncUITests\/testUIFromSettings()",
         "TabCounterTests",
+        "TabTests",
         "TabTrayTests",
         "TabTrayTests\/testAccessibility()",
         "TabsPerformanceTest",

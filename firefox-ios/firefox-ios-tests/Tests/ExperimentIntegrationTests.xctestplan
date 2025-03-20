@@ -112,6 +112,8 @@
         "ShareToolbarTests",
         "SiteLoadTest",
         "SyncUITests",
+        "TabTests",
+        "TabTests\/testCloseOneTab()",
         "TabTrayTests",
         "TabTrayTests\/testAccessibility()",
         "ThirdPartySearchTest",

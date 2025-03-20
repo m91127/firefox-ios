@@ -95,6 +95,7 @@
         "SiteLoadTest",
         "SyncUITests",
         "TabCounterTests",
+        "TabTests",
         "TabTrayTests",
         "ThirdPartySearchTest",
         "TodayWidgetTests",
