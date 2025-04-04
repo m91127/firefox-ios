@@ -91,7 +91,7 @@ protocol Profile: AnyObject {
     var places: RustPlaces { get }
     var prefs: Prefs { get }
     var queue: TabQueue { get }
-    #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER
+    #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER && !MOZ_TARGET_ACTIONEXTENSION
     var searchEnginesManager: SearchEnginesManager { get }
     #endif
     var files: FileAccessor { get }
@@ -485,7 +485,7 @@ open class BrowserProfile: Profile {
 
     lazy var autofill = RustAutofill(databasePath: autofillDbPath, rustKeychainEnabled: rustKeychainEnabled)
 
-    #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER
+    #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER && !MOZ_TARGET_ACTIONEXTENSION
     lazy var searchEnginesManager: SearchEnginesManager = {
         return SearchEnginesManager(prefs: self.prefs, files: self.files)
     }()
@@ -816,7 +816,7 @@ open class BrowserProfile: Profile {
         RustFirefoxAccounts.shared.disconnect()
 
         // Not available in extensions
-        #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER
+        #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER && !MOZ_TARGET_ACTIONEXTENSION
         unregisterRemoteNotifications()
         #endif
 

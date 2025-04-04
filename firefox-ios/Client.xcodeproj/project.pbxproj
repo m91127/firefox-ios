@@ -1182,6 +1182,28 @@
 		8C2937712BF79F0300146613 /* EditAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C29376E2BF79F0300146613 /* EditAddressViewController.swift */; };
 		8C2937722BF79F0300146613 /* Address+Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C29376F2BF79F0300146613 /* Address+Encodable.swift */; };
 		8C29627C2B1F473800571655 /* AdEventsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C29627B2B1F473800571655 /* AdEventsResponse.swift */; };
+		8C3536942D9ED59100D0DB81 /* Localizations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A2D861AB8B3260023ABC3 /* Localizations.framework */; };
+		8C3536982D9ED59100D0DB81 /* RustMozillaAppServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43BE578A278BA4D900491291 /* RustMozillaAppServices.framework */; };
+		8C35369C2D9ED59100D0DB81 /* Sync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2827315E1ABC9BE600AA1954 /* Sync.framework */; };
+		8C3536A22D9ED59F00D0DB81 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3536A12D9ED59F00D0DB81 /* Common */; };
+		8C3536A42D9ED59F00D0DB81 /* Shared in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3536A32D9ED59F00D0DB81 /* Shared */; };
+		8C3536A62D9ED59F00D0DB81 /* GCDWebServers in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3536A52D9ED59F00D0DB81 /* GCDWebServers */; };
+		8C3536A82D9ED59F00D0DB81 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8C3536A72D9ED59F00D0DB81 /* SnapKit */; };
+		8C3536A92D9ED63F00D0DB81 /* DevicePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CD748216CF86B004FF5B0 /* DevicePickerViewController.swift */; };
+		8C3536AA2D9ED64B00D0DB81 /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B04A9C28E20A8300670E54 /* InstructionsView.swift */; };
+		8C3536AB2D9ED65500D0DB81 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34DC84D1A16C40C00D49B7B /* Profile.swift */; };
+		8C3536AC2D9ED66400D0DB81 /* SendToDeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AFBAF8292EA0330065E35E /* SendToDeviceHelper.swift */; };
+		8C3536AD2D9ED67E00D0DB81 /* DevicePickerTableViewHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD81BD290C5C7500124B27 /* DevicePickerTableViewHeaderCell.swift */; };
+		8C3536AE2D9ED68800D0DB81 /* SyncDisplayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60D03171D511398002FE3F6 /* SyncDisplayState.swift */; };
+		8C3536AF2D9ED78700D0DB81 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD81C4290C6D5800124B27 /* HelpView.swift */; };
+		8C3536B02D9ED79000D0DB81 /* AccessibilityIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C84266742728462900382274 /* AccessibilityIdentifiers.swift */; };
+		8C3536B12D9ED7A900D0DB81 /* LoginRecordExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6025B10B267B6BEA00F59F6B /* LoginRecordExtension.swift */; };
+		8C3536B22D9ED7C800D0DB81 /* RustErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B7109D2ABE380B0029726E /* RustErrors.swift */; };
+		8C3536B32D9ED7D000D0DB81 /* RustSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A0B08129AD61FA0091C75B /* RustSyncManager.swift */; };
+		8C3536B42D9ED7E500D0DB81 /* EventQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7B78962ADF32590011E9F2 /* EventQueue.swift */; };
+		8C3536B52D9ED7FE00D0DB81 /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7B78982ADF328E0011E9F2 /* AppEvent.swift */; };
+		8C3536B62D9ED82100D0DB81 /* DevicePickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD81BB290C5C3F00124B27 /* DevicePickerTableViewCell.swift */; };
+		8C3536B72D9ED82900D0DB81 /* HostingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD81C1290C62A600124B27 /* HostingTableViewCell.swift */; };
 		8C44A9D22A6A99FE009A1AA7 /* ShoppingProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C44A9D12A6A99FE009A1AA7 /* ShoppingProduct.swift */; };
 		8C46E1B72B2209F000F56521 /* FakespotAdsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C46E1B62B2209F000F56521 /* FakespotAdsEvent.swift */; };
 		8C4B0F5D2C076B12008B3E74 /* UpdatableAddressFields+Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B0F5C2C076B12008B3E74 /* UpdatableAddressFields+Decodable.swift */; };
@@ -2196,6 +2218,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8C19C1CD2D8C453B00BEAA17;
 			remoteInfo = ActionExtension;
+		};
+		8C3536962D9ED59100D0DB81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 288A2D851AB8B3260023ABC3;
+			remoteInfo = Localizations;
+		};
+		8C35369A2D9ED59100D0DB81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 43BE5774278BA4D900491291;
+			remoteInfo = RustMozillaAppServices;
+		};
+		8C35369E2D9ED59100D0DB81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F84B21B61A090F8100AAB793 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2827315D1ABC9BE600AA1954;
+			remoteInfo = Sync;
 		};
 		C82043702523DBEB00740B71 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -10621,7 +10664,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C3536A22D9ED59F00D0DB81 /* Common in Frameworks */,
+				8C3536A82D9ED59F00D0DB81 /* SnapKit in Frameworks */,
 				8C19C1D02D8C453B00BEAA17 /* UniformTypeIdentifiers.framework in Frameworks */,
+				8C3536A62D9ED59F00D0DB81 /* GCDWebServers in Frameworks */,
+				8C3536982D9ED59100D0DB81 /* RustMozillaAppServices.framework in Frameworks */,
+				8C3536942D9ED59100D0DB81 /* Localizations.framework in Frameworks */,
+				8C35369C2D9ED59100D0DB81 /* Sync.framework in Frameworks */,
+				8C3536A42D9ED59F00D0DB81 /* Shared in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15745,12 +15795,19 @@
 			buildRules = (
 			);
 			dependencies = (
+				8C3536972D9ED59100D0DB81 /* PBXTargetDependency */,
+				8C35369B2D9ED59100D0DB81 /* PBXTargetDependency */,
+				8C35369F2D9ED59100D0DB81 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8C19C1D12D8C453B00BEAA17 /* ActionExtension */,
 			);
 			name = ActionExtension;
 			packageProductDependencies = (
+				8C3536A12D9ED59F00D0DB81 /* Common */,
+				8C3536A32D9ED59F00D0DB81 /* Shared */,
+				8C3536A52D9ED59F00D0DB81 /* GCDWebServers */,
+				8C3536A72D9ED59F00D0DB81 /* SnapKit */,
 			);
 			productName = ActionExtension;
 			productReference = 8C19C1CE2D8C453B00BEAA17 /* ActionExtension.appex */;
@@ -17078,6 +17135,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C3536AF2D9ED78700D0DB81 /* HelpView.swift in Sources */,
+				8C3536AA2D9ED64B00D0DB81 /* InstructionsView.swift in Sources */,
+				8C3536B62D9ED82100D0DB81 /* DevicePickerTableViewCell.swift in Sources */,
+				8C3536AC2D9ED66400D0DB81 /* SendToDeviceHelper.swift in Sources */,
+				8C3536B52D9ED7FE00D0DB81 /* AppEvent.swift in Sources */,
+				8C3536B32D9ED7D000D0DB81 /* RustSyncManager.swift in Sources */,
+				8C3536B22D9ED7C800D0DB81 /* RustErrors.swift in Sources */,
+				8C3536AE2D9ED68800D0DB81 /* SyncDisplayState.swift in Sources */,
+				8C3536A92D9ED63F00D0DB81 /* DevicePickerViewController.swift in Sources */,
+				8C3536B12D9ED7A900D0DB81 /* LoginRecordExtension.swift in Sources */,
+				8C3536AB2D9ED65500D0DB81 /* Profile.swift in Sources */,
+				8C3536B02D9ED79000D0DB81 /* AccessibilityIdentifiers.swift in Sources */,
+				8C3536AD2D9ED67E00D0DB81 /* DevicePickerTableViewHeaderCell.swift in Sources */,
+				8C3536B72D9ED82900D0DB81 /* HostingTableViewCell.swift in Sources */,
+				8C3536B42D9ED7E500D0DB81 /* EventQueue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18748,6 +18820,21 @@
 			isa = PBXTargetDependency;
 			target = 8C19C1CD2D8C453B00BEAA17 /* ActionExtension */;
 			targetProxy = 8C19C1DA2D8C453C00BEAA17 /* PBXContainerItemProxy */;
+		};
+		8C3536972D9ED59100D0DB81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 288A2D851AB8B3260023ABC3 /* Localizations */;
+			targetProxy = 8C3536962D9ED59100D0DB81 /* PBXContainerItemProxy */;
+		};
+		8C35369B2D9ED59100D0DB81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 43BE5774278BA4D900491291 /* RustMozillaAppServices */;
+			targetProxy = 8C35369A2D9ED59100D0DB81 /* PBXContainerItemProxy */;
+		};
+		8C35369F2D9ED59100D0DB81 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2827315D1ABC9BE600AA1954 /* Sync */;
+			targetProxy = 8C35369E2D9ED59100D0DB81 /* PBXContainerItemProxy */;
 		};
 		C82043712523DBEB00740B71 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -26489,6 +26576,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "$(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_$(CHANNEL) -DMOZ_TARGET_ACTIONEXTENSION";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.Fennec.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -26565,6 +26653,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_developer -DMOZ_TARGET_ACTIONEXTENSION";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.Fennec.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -26642,6 +26731,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_$(CHANNEL) -DMOZ_TARGET_ACTIONEXTENSION";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.Fennec.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -26718,6 +26808,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_$(CHANNEL) -DMOZ_TARGET_ACTIONEXTENSION";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.Fennec.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -26794,6 +26885,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_$(CHANNEL) -DMOZ_TARGET_ACTIONEXTENSION";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.Fennec.ActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -28978,6 +29070,24 @@
 		8AF2D0FB2A5F272A00C7DD69 /* ComponentLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ComponentLibrary;
+		};
+		8C3536A12D9ED59F00D0DB81 /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
+		};
+		8C3536A32D9ED59F00D0DB81 /* Shared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Shared;
+		};
+		8C3536A52D9ED59F00D0DB81 /* GCDWebServers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 433F87CC2788EAB600693368 /* XCRemoteSwiftPackageReference "GCDWebServer" */;
+			productName = GCDWebServers;
+		};
+		8C3536A72D9ED59F00D0DB81 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4368F83B279669690013419B /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 		AB2AC6622BCFD0A200022AAB /* X509 */ = {
 			isa = XCSwiftPackageProductDependency;
