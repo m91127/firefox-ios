@@ -32,11 +32,15 @@ fi
 
 DEVICE="iPhone 16"
 IOS_VERSION="iOS 18.3.1"
-xcrun simctl create "$DEVICE $IOS_VERSION" "$DEVICE" "com.apple.CoreSimulator.SimRuntime.iOS-18-3"
+RUNTIME="com.apple.CoreSimulator.SimRuntime.iOS-18-3"
+
+# Create and boot the simulator
+SIMULATOR_ID=$(xcrun simctl create "$DEVICE $IOS_VERSION" "$DEVICE" "$RUNTIME")
+xcrun simctl boot "$SIMULATOR_ID"
 
 for lang in $LOCALES; do
     # start simple with Focus only
-    echo "Snapshotting on $DEVICE"
+    echo "Snapshotting on $DEVICE $IOS_VERSION"
     mkdir -p "l10n-screenshots/$lang"
     fastlane snapshot --project focus-ios/Blockzilla.xcodeproj --scheme "FocusSnapshotTests" \
       --derived_data_path l10n-screenshots-dd \
