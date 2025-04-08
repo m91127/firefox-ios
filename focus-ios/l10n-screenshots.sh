@@ -32,7 +32,7 @@ fi
 
 DEVICE="iPhone 16"
 IOS_VERSION="iOS 18.3.1"
-xcrun simctl create "\"$DEVICE $IOS_VERSION\"" "$DEVICE" "com.apple.CoreSimulator.SimRuntime.iOS-18-3"
+xcrun simctl create "$DEVICE $IOS_VERSION" "$DEVICE" "com.apple.CoreSimulator.SimRuntime.iOS-18-3"
 
 for lang in $LOCALES; do
     # start simple with Focus only
@@ -45,7 +45,7 @@ for lang in $LOCALES; do
       --skip_open_summary \
       --xcargs "-maximum-parallel-testing-workers 1" \
       --erase_simulator --localize_simulator \
-      --devices \"$DEVICE $IOS_VERSION\" \
+      --devices "$DEVICE $IOS_VERSION" \
       --languages "$lang" \
       --output_directory "l10n-screenshots/$lang" \
       $EXTRA_FAST_LANE_ARGS
