@@ -11,7 +11,7 @@ on:
     - cron: "0 4 * * 1"
 env:
   xcode_version: 16.3
-  ios_version: 18.2
+  ios_version: 18.3.1
   ios_simulator_default: iPhone 16
 
 jobs:
