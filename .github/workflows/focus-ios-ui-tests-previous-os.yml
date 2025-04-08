@@ -63,6 +63,8 @@ jobs:
       - name: Build Focus
         id: compile
         run: |
+          xcrun simctl boot ${{ matrix.ios_simulator}}
+          xcrun simctl install ${{ matrix.ios_simulator}} ~DerivedData/Blockzilla-*/Build/Products/FocusDebug-iPhonesimulator/Firefox\ Focus.app
           xcodebuild \
             build-for-testing \
             -scheme ${{ env.xcodebuild_scheme }} \
