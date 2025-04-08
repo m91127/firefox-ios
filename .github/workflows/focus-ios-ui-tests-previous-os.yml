@@ -74,9 +74,15 @@ jobs:
       - name: Run smoke tests
         id: run-smoketests
         run: |
-          xcrun simctl boot "${{ matrix.ios_simulator}}"
-          find . -name *.app ~/DerivedData/Blockzilla-*/Build/Products/
-          ## xcrun simctl install "${{ matrix.ios_simulator}}" ~/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iPhonesimulator/Firefox\ Focus.app
+          # Workaround for iOS 16 crashes:
+          # Warm up the simulator before running the tests for real
+          xcodebuild \
+            test-without-building \
+            -scheme ${{ env.xcodebuild_scheme }} \
+            -target ${{ env.xcodebuild_target }} \
+            -derivedDataPath ~/DerivedData \
+            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
+            -testPlan SmokeTest -only-testing:XCUITest/BrowsingTest/testNavigationToolbar
           xcodebuild \
             test-without-building \
             -scheme ${{ env.xcodebuild_scheme }} \
