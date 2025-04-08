@@ -22,8 +22,8 @@ jobs:
         include:
           #- ios_version: 17.5
           #  ios_simulator: iPhone 15
-          - ios_version: 16.2
-            ios_simulator: iPhone 14
+          - ios_version: 16.4
+            ios_simulator: iPhone 14 Pro
           #- ios_version: 15.5
           #  ios_simulator: iPhone 13
     steps:
