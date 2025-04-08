@@ -75,7 +75,8 @@ jobs:
         id: run-smoketests
         run: |
           xcrun simctl boot "${{ matrix.ios_simulator}}"
-          xcrun simctl install "${{ matrix.ios_simulator}}" ~/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iPhonesimulator/Firefox\ Focus.app
+          find . -name *.app ~/DerivedData/Blockzilla-*/Build/Products/
+          ## xcrun simctl install "${{ matrix.ios_simulator}}" ~/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iPhonesimulator/Firefox\ Focus.app
           xcodebuild \
             test-without-building \
             -scheme ${{ env.xcodebuild_scheme }} \
