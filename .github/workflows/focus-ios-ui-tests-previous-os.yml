@@ -76,13 +76,14 @@ jobs:
         run: |
           # Workaround for iOS 16 crashes:
           # Warm up the simulator before running the tests for real
+          # Do not fail the workflow if the warmup fails.
           xcodebuild \
             test-without-building \
             -scheme ${{ env.xcodebuild_scheme }} \
             -target ${{ env.xcodebuild_target }} \
             -derivedDataPath ~/DerivedData \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
-            -testPlan SmokeTest -only-testing:XCUITest/BrowsingTest/testNavigationToolbar
+            -testPlan SmokeTest -only-testing:XCUITest/BrowsingTest/testNavigationToolbar | xcpretty _0.3.0_ && exit ${PIPESTATUS[0]}
           xcodebuild \
             test-without-building \
             -scheme ${{ env.xcodebuild_scheme }} \
