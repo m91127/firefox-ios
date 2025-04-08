@@ -45,7 +45,7 @@ for lang in $LOCALES; do
       --skip_open_summary \
       --xcargs "-maximum-parallel-testing-workers 1" \
       --erase_simulator --localize_simulator \
-      --devices "\"$DEVICE $IOS_VERSION\"" \
+      --devices "$DEVICE $IOS_VERSION" \
       --languages "$lang" \
       --output_directory "l10n-screenshots/$lang" \
       $EXTRA_FAST_LANE_ARGS
