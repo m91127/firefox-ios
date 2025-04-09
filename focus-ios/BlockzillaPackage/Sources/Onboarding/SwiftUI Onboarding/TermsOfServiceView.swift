@@ -21,6 +21,7 @@ struct TermsOfServiceView: View {
                 Image.background
                     .resizable()
                     .edgesIgnoringSafeArea(.all)
+                    .accessibilityHidden(true)
 
                 VStack {
                     Spacer(minLength: geometry.size.height * 0.06)
@@ -28,7 +29,10 @@ struct TermsOfServiceView: View {
                     VStack(spacing: OnboardingConstants.Spacing.vertical) {
                         logoView
                         TextStyle.title(Text(viewModel.tosConfig.title))
+                            .accessibilityIdentifier(AccessibilityIdentifiers.TermsOfService.title)
+                            .accessibilityAddTraits(.isHeader)
                         TextStyle.subtitle(Text(viewModel.tosConfig.subtitle))
+                            .accessibilityIdentifier(AccessibilityIdentifiers.TermsOfService.subtitle)
                     }
                     
                     Spacer(minLength: OnboardingConstants.Spacing.standard)
@@ -36,22 +40,28 @@ struct TermsOfServiceView: View {
                     VStack(spacing: OnboardingConstants.Spacing.standard * 2) {
                         VStack(alignment: .center, spacing: OnboardingConstants.Spacing.standard) {
                             termsView
+                                .accessibilityIdentifier(AccessibilityIdentifiers.TermsOfService.termsOfServiceAgreement)
                             privacyView
+                                .accessibilityIdentifier(AccessibilityIdentifiers.TermsOfService.privacyNoticeAgreement)
                         }
                         
                         Button(action: { viewModel.send(.onAcceptAndContinueTapped) }) {
                             Text(viewModel.tosConfig.buttonText)
                         }
                         .buttonStyle(PrimaryButtonStyle())
+                        .accessibilityIdentifier(AccessibilityIdentifiers.TermsOfService.agreeAndContinueButton)
                     }
                 }
                 .padding(.horizontal, OnboardingConstants.Spacing.contentPadding)
-                .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? geometry.safeAreaInsets.bottom : OnboardingConstants.Spacing.standard * 2)
+                .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ?
+                             geometry.safeAreaInsets.bottom : OnboardingConstants.Spacing.standard * 2)
             }
         }
         .sheet(item: $viewModel.privacyPolicyURL) { url in
             PrivacyPolicyView(
                 doneButtonText: viewModel.tosConfig.doneButton,
+                errorMessage: viewModel.tosConfig.errorMessage,
+                retryButtonText: viewModel.tosConfig.retryButtonText,
                 url: url
             )
         }
@@ -67,6 +77,7 @@ struct TermsOfServiceView: View {
                 width: OnboardingConstants.Layout.logoSize.width,
                 height: OnboardingConstants.Layout.logoSize.height
             )
+            .accessibilityHidden(true)
     }
     
     private var termsView: some View {
@@ -117,6 +128,8 @@ public struct TermsOfServiceConfig {
     let privacyLinkText: String
     let buttonText: String
     let doneButton: String
+    let errorMessage: String
+    let retryButtonText: String
     
     public init(
         title: String,
@@ -126,7 +139,9 @@ public struct TermsOfServiceConfig {
         termsLinkText: String,
         privacyLinkText: String,
         buttonText: String,
-        doneButton: String
+        doneButton: String,
+        errorMessage: String,
+        retryButtonText: String
     ) {
         self.title = title
         self.subtitle = subtitle
@@ -136,6 +151,8 @@ public struct TermsOfServiceConfig {
         self.privacyLinkText = privacyLinkText
         self.buttonText = buttonText
         self.doneButton = doneButton
+        self.errorMessage = errorMessage
+        self.retryButtonText = retryButtonText
     }
 }
 

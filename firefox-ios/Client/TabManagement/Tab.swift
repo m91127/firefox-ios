@@ -8,6 +8,7 @@ import Storage
 import Shared
 import SiteImageView
 import WebKit
+import WebEngine
 
 private var debugTabCount = 0
 
@@ -377,6 +378,7 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
     var nightMode: Bool {
         didSet {
             guard nightMode != oldValue else { return }
+            webView?.isOpaque = !nightMode
             webView?.evaluateJavascriptInCustomContentWorld(
                 NightModeHelper.jsCallbackBuilder(nightMode),
                 in: .world(name: NightModeHelper.name())
@@ -429,7 +431,6 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
     /// Any time a tab tries to make requests to display a Javascript Alert and we are not the active
     /// tab instance, queue it for later until we become foregrounded.
     private var alertQueue = [JSAlertInfo]()
-    private var newAlertQueue = [NewJSAlertInfo]()
 
     var onLoading: VoidReturnCallback?
     private var webViewLoadingObserver: NSKeyValueObservation?
@@ -883,6 +884,14 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
         TabEvent.post(.didToggleDesktopMode, for: self)
     }
 
+    func cancelQueuedAlerts() {
+        alertQueue.forEach { alert in
+            alert.cancel()
+        }
+    }
+
+    /// Queues a JS Alert for later display
+    /// Do not call completionHandler until the alert is displayed and dismissed
     func queueJavascriptAlertPrompt(_ alert: JSAlertInfo) {
         alertQueue.append(alert)
     }
@@ -892,25 +901,8 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
         return alertQueue.removeFirst()
     }
 
-    func cancelQueuedAlerts() {
-        newAlertQueue.forEach { alert in
-            alert.cancel()
-        }
-    }
-
-    /// Queues a JS Alert for later display
-    /// Do not call completionHandler until the alert is displayed and dismissed
-    func newQueueJavascriptAlertPrompt(_ alert: NewJSAlertInfo) {
-        newAlertQueue.append(alert)
-    }
-
-    func newDequeueJavascriptAlertPrompt() -> NewJSAlertInfo? {
-        guard !newAlertQueue.isEmpty else { return nil }
-        return newAlertQueue.removeFirst()
-    }
-
     func hasJavascriptAlertPrompt() -> Bool {
-        return !newAlertQueue.isEmpty
+        return !alertQueue.isEmpty
     }
 
     override func observeValue(
@@ -953,6 +945,11 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
     func applyTheme(theme: Theme) {
         UITextField.appearance().keyboardAppearance = theme.type.keyboardAppearence(isPrivate: isPrivate)
         webView?.applyTheme(theme: theme)
+        /// Configures the web view's background to prevent a white flash during initial load in night mode.
+        /// Note: Background colors are only visible when `isOpaque` is false — setting them while it's true has no effect.
+        webView?.backgroundColor =  theme.colors.layer1
+        webView?.scrollView.backgroundColor = theme.colors.layer1
+        webView?.isOpaque = !nightMode
         webView?.underPageBackgroundColor = nightMode ? .black : nil
     }
 

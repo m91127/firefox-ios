@@ -29,22 +29,48 @@ final class ASSearchEngineProvider: SearchEngineProvider {
 
     // MARK: - SearchEngineProvider
 
-    func getOrderedEngines(customEngines: [OpenSearchEngine],
-                           orderedEngineNames: [String]?,
-                           completion: @escaping ([OpenSearchEngine]) -> Void) {
-        // Note: this currently duplicates the logic from DefaultSearchEngineProvider.
-        // Eventually that class will be removed once we switch fully to consolidated search.
+    let preferencesVersion: SearchEngineOrderingPrefsVersion = .v2
 
+    func getOrderedEngines(customEngines: [OpenSearchEngine],
+                           engineOrderingPrefs: SearchEnginePrefs,
+                           prefsMigrator: SearchEnginePreferencesMigrator,
+                           completion: @escaping SearchEngineCompletion) {
+        DispatchQueue.global().async { [weak self] in
+            // Note: this currently duplicates the logic from DefaultSearchEngineProvider.
+            // Eventually that class will be removed once we switch fully to consolidated search.
+            self?.fetchUnorderedEnginesAndApplyOrdering(
+                customEngines: customEngines,
+                engineOrderingPrefs: engineOrderingPrefs,
+                prefsMigrator: prefsMigrator,
+                completion: completion
+            )
+        }
+    }
+
+    // MARK: - Private Utilities
+
+    private func fetchUnorderedEnginesAndApplyOrdering(customEngines: [OpenSearchEngine],
+                                                       engineOrderingPrefs: SearchEnginePrefs,
+                                                       prefsMigrator: SearchEnginePreferencesMigrator,
+                                                       completion: @escaping SearchEngineCompletion) {
         let locale = Locale(identifier: Locale.preferredLanguages.first ?? Locale.current.identifier)
+        let prefsVersion = preferencesVersion
 
         // First load the unordered engines, based on the current locale and language
         getUnorderedBundledEnginesFor(locale: locale,
                                       possibleLanguageIdentifier: locale.possibilitiesForLanguageIdentifier(),
                                       completion: { engineResults in
             let unorderedEngines = customEngines + engineResults
-            guard let orderedEngineNames = orderedEngineNames else {
-                // We haven't persisted the engine order, so return whatever order we got from disk.
-                ensureMainThread { completion(unorderedEngines) }
+            let finalEngineOrderingPrefs = prefsMigrator.migratePrefsIfNeeded(engineOrderingPrefs,
+                                                                              to: prefsVersion,
+                                                                              availableEngines: unorderedEngines)
+
+            guard let orderedEngineNames = finalEngineOrderingPrefs.engineIdentifiers,
+                  !orderedEngineNames.isEmpty else {
+                // We haven't persisted the engine order, so use the default engine ordering.
+                // For AS-based engines we are guaranteed the preferred default to be at index 0
+                // (this happens in `fetchSearchEngines()`).
+                ensureMainThread { completion(finalEngineOrderingPrefs, unorderedEngines) }
                 return
             }
 
@@ -68,11 +94,9 @@ final class ASSearchEngineProvider: SearchEngineProvider {
                 }
             }
 
-            ensureMainThread { completion(orderedEngines) }
+            ensureMainThread { completion(finalEngineOrderingPrefs, orderedEngines) }
         })
     }
-
-    // MARK: - Private Utilities
 
     private func getUnorderedBundledEnginesFor(locale: Locale,
                                                possibleLanguageIdentifier: [String],

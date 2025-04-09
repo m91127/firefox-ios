@@ -995,11 +995,20 @@ struct AddressBarState: StateType, Equatable {
         let isShowMenuWarningAction = action.actionType as? ToolbarActionType == .showMenuWarningBadge
         let showActionWarningBadge = action.showMenuWarningBadge ?? toolbarState.showMenuWarningBadge
         let showWarningBadge = isShowMenuWarningAction ? showActionWarningBadge : toolbarState.showMenuWarningBadge
+        let menuIcon = layout == .version1 ? StandardImageIdentifiers.Large.moreHorizontalRound
+                                           : StandardImageIdentifiers.Large.appMenu
 
-        actions.append(contentsOf: [
-            tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode),
-            menuAction(showWarningBadge: showWarningBadge)
-        ])
+        if layout == .version1 {
+            actions.append(contentsOf: [
+                menuAction(iconName: menuIcon, showWarningBadge: showWarningBadge),
+                tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode)
+            ])
+        } else {
+            actions.append(contentsOf: [
+                tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode),
+                menuAction(iconName: menuIcon, showWarningBadge: showWarningBadge)
+            ])
+        }
 
         return actions
     }
@@ -1025,10 +1034,10 @@ struct AddressBarState: StateType, Equatable {
             a11yId: AccessibilityIdentifiers.Toolbar.tabsButton)
     }
 
-    private static func menuAction(showWarningBadge: Bool = false) -> ToolbarActionConfiguration {
+    private static func menuAction(iconName: String, showWarningBadge: Bool = false) -> ToolbarActionConfiguration {
         return ToolbarActionConfiguration(
             actionType: .menu,
-            iconName: StandardImageIdentifiers.Large.appMenu,
+            iconName: iconName,
             badgeImageName: showWarningBadge ? StandardImageIdentifiers.Large.warningFill : nil,
             maskImageName: showWarningBadge ? ImageIdentifiers.menuWarningMask : nil,
             isEnabled: true,
