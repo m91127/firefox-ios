@@ -1352,6 +1352,14 @@ workflows:
             sed 's/.*=//;s/'\''/"/g' data.txt > test.json
             cat test.json
             python3 perfTestTransform.py
+    - xcode-test@6.0.0:
+        inputs:
+        - project_path: firefox-ios/Client.xcodeproj
+        - scheme: Fennec
+        - destination: platform=iOS Simulator,name=iPhone 16,OS=18.2
+        - test_plan: UnitTest
+        - test_repetition_mode: until_failure
+        - maximum_test_repetitions: 10
     - deploy-to-bitrise-io@2.10.0: {}
     before_run:
     - 1_git_clone_and_post_clone
@@ -1696,7 +1704,7 @@ workflows:
         - test_plan: UnitTest
         - test_repetition_mode: until_failure
         - maximum_test_repetitions: 10
-    - deploy-to-bitrise-io@2.10.0: {}
+    - deploy-to-bitrise-io@2.12.0: {}
     before_run:
     - 1_git_clone_and_post_clone
     - 2_certificate_and_profile
