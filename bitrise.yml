@@ -1685,8 +1685,6 @@ workflows:
 
   Firefox_Unit_Tests:
     steps:
-    - cache-pull@2.7.2:
-        is_always_run: true
     - xcode-test@6.0.0:
         inputs:
         - project_path: firefox-ios/Client.xcodeproj
@@ -1696,13 +1694,6 @@ workflows:
         - test_plan: UnitTest
         - test_repetition_mode: until_failure
         - maximum_test_repetitions: 5
-    - script@1.2.1:
-        title: Set BITRISE_XCRESULT_PATH
-        inputs:
-        - content: |
-            #!/bin/bash
-            export BITRISE_XCRESULT_PATH="/Users/vagrant/Library/Developer/Xcode/DerivedData/Client*/Logs/Test/Test-Fennec-test.xcresult"
-            envman add --key BITRISE_XCRESULT_PATH --value "$BITRISE_XCRESULT_PATH"
     - deploy-to-bitrise-io@2.12.0: {}
     - custom-test-results-export@1.0.0:
         title: Export test results for Insights
