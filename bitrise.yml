@@ -569,6 +569,7 @@ workflows:
 
             rm /tmp/tmp.xcconfig
             # envman add --key XCODE_XCCONFIG_FILE --value ''
+            envman unset --key XCODE_XCCONFIG_FILE
         title: Remove carthage lipo workaround
   3_provisioning_and_npm_installation:
     steps:
