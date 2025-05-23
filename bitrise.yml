@@ -1658,18 +1658,13 @@ workflows:
     - 2_certificate_and_profile
     - 3_provisioning_and_npm_installation
     steps:
-    - script@1.2.1:
-        title: Install dependencies
-        inputs:
-        - contents: |-
-            sudo xcodes runtimes install "iOS 18.3.1"
     - xcode-test@6.0.1:
         timeout: 3000
         inputs:
         - project_path: firefox-ios/Client.xcodeproj
         - scheme: Fennec
         - configuration: Fennec_Testing
-        - destination: platform=iOS Simulator,name=iPhone 16,OS=18.3.1
+        - destination: platform=iOS Simulator,name=iPhone 16,OS=18.4
         - test_plan: UnitTest
         - test_repetition_mode: until_failure
         - maximum_test_repetitions: 10
