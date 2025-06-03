@@ -8,6 +8,7 @@ import Storage
 import Common
 import Shared
 import WebKit
+import WebEngine
 
 enum SwitchPrivacyModeResult {
     case createdNewTab
@@ -124,15 +125,17 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         return uuid
     }
 
+    @MainActor private lazy var configurationProvider = DefaultWKEngineConfigurationProvider()
+
     // MARK: - Webview configuration
     // A WKWebViewConfiguration used for normal tabs
-    private lazy var configuration: WKWebViewConfiguration = {
-        return TabManagerImplementation.makeWebViewConfig(isPrivate: false, prefs: profile.prefs)
+    @MainActor private lazy var configuration: WKWebViewConfiguration = {
+        return configurationProvider.configuration(from: profile.prefs, isPrivate: false).webViewConfiguration
     }()
 
     // A WKWebViewConfiguration used for private mode tabs
-    private lazy var privateConfiguration: WKWebViewConfiguration = {
-        return TabManagerImplementation.makeWebViewConfig(isPrivate: true, prefs: profile.prefs)
+    @MainActor private lazy var privateConfiguration: WKWebViewConfiguration = {
+        return configurationProvider.configuration(from: profile.prefs, isPrivate: true).webViewConfiguration
     }()
 
     init(profile: Profile,
@@ -186,30 +189,6 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         }
 
         return nil
-    }
-
-    static func makeWebViewConfig(isPrivate: Bool, prefs: Prefs?) -> WKWebViewConfiguration {
-        let configuration = WKWebViewConfiguration()
-        configuration.processPool = WKProcessPool()
-        let blockPopups = prefs?.boolForKey(PrefsKeys.KeyBlockPopups) ?? true
-        configuration.preferences.javaScriptCanOpenWindowsAutomatically = !blockPopups
-        configuration.mediaTypesRequiringUserActionForPlayback = AutoplayAccessors
-            .getMediaTypesRequiringUserActionForPlayback(prefs)
-        // We do this to go against the configuration of the <meta name="viewport">
-        // tag to behave the same way as Safari :-(
-        configuration.ignoresViewportScaleLimits = true
-        // TODO: FXIOS-12158 Add back after investigating why video player is broken
-//        if #available(iOS 15.4, *) {
-//            configuration.preferences.isElementFullscreenEnabled = true
-//        }
-        if isPrivate {
-            configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
-        } else {
-            configuration.websiteDataStore = WKWebsiteDataStore.default()
-        }
-
-        configuration.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
-        return configuration
     }
 
     // MARK: - Add/Remove Delegate
@@ -370,6 +349,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     }
 
     // MARK: - Add Tab
+    @MainActor
     func addTab(_ request: URLRequest?, afterTab: Tab?, isPrivate: Bool) -> Tab {
         return addTab(request,
                       afterTab: afterTab,
@@ -379,6 +359,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     }
 
     @discardableResult
+    @MainActor
     func addTab(_ request: URLRequest? = nil,
                 afterTab: Tab? = nil,
                 zombie: Bool = false,
@@ -391,6 +372,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
                       isPrivate: isPrivate)
     }
 
+    @MainActor
     func addTabsForURLs(_ urls: [URL], zombie: Bool, shouldSelectTab: Bool = true, isPrivate: Bool = false) {
         if urls.isEmpty {
             return
@@ -413,6 +395,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         commitChanges()
     }
 
+    @MainActor
     private func addTab(_ request: URLRequest? = nil,
                         afterTab: Tab? = nil,
                         flushToDisk: Bool,
@@ -444,7 +427,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     }
 
     // MARK: - Undo Close Tab
+    @MainActor
     func undoCloseTab() {
+        assert(Thread.isMainThread)
         guard let backupCloseTab = self.backupCloseTab else { return }
 
         let previouslySelectedTab = selectedTab
@@ -464,7 +449,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         commitChanges()
     }
 
+    @MainActor
     func undoCloseAllTabs() {
+        assert(Thread.isMainThread)
         guard !backupCloseTabs.isEmpty else { return }
         tabs = backupCloseTabs
         commitChanges()
@@ -477,7 +464,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
 
     // MARK: - Restore tabs
 
+    @MainActor
     func restoreTabs(_ forced: Bool = false) {
+        assert(Thread.isMainThread)
         if isDeeplinkOptimizationRefactorEnabled {
             // Deeplinks happens before tab restoration, so we should have a tab already present in the tabs list
             // if the application was opened from a deeplink.
@@ -522,6 +511,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     ///   no homepage open, we open a new tab in the correct state.
     ///   - profilePreferences: Preferences, stored in the user's `Profile`
     /// - Returns: A selectable tab
+    @MainActor
     private func createStartAtHomeTab(withExistingTab existingTab: Tab?,
                                       inPrivateMode privateMode: Bool,
                                       and profilePreferences: Prefs
@@ -542,7 +532,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         return selectedTab ?? addTab()
     }
 
+    @MainActor
     private func updateSelectedTabAfterRemovalOf(_ removedTab: Tab, deletedIndex: Int) {
+        assert(Thread.isMainThread)
         // If the currently selected tab has been deleted, try to select the next most reasonable tab.
         if deletedIndex == selectedIndex {
             // First, check if the user has closed the last viable tab of the current browsing mode: private or normal.
@@ -603,7 +595,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     }
 
     @objc
+    @MainActor
     private func blockPopUpDidChange() {
+        assert(Thread.isMainThread)
         let allowPopups = !(profile.prefs.boolForKey(PrefsKeys.KeyBlockPopups) ?? true)
         // Each tab may have its own configuration, so we should tell each of them in turn.
         for tab in tabs {
@@ -615,7 +609,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     }
 
     @objc
+    @MainActor
     private func autoPlayDidChange() {
+        assert(Thread.isMainThread)
         let mediaType = AutoplayAccessors.getMediaTypesRequiringUserActionForPlayback(profile.prefs)
         // https://developer.apple.com/documentation/webkit/wkwebviewconfiguration
         // The web view incorporates our configuration settings only at creation time; we cannot change
@@ -706,6 +702,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         handleTabSelectionAfterRestore(tabToSelect: tabToSelect)
     }
 
+    @MainActor
     private func configureNewTab(with tabData: TabData) -> Tab? {
         let newTab: Tab
 
@@ -755,7 +752,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         return newTab
     }
 
+    @MainActor
     private func handleTabSelectionAfterRestore(tabToSelect: Tab?) {
+        assert(Thread.isMainThread)
         if isDeeplinkOptimizationRefactorEnabled, let deeplinkTab {
             if let index = tabs.firstIndex(of: deeplinkTab) {
                 selectedIndex = index
@@ -896,7 +895,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     /// This function updates the selectedIndex.
     /// Note: it is safe to call this with `tab` and `previous` as the same tab, for use in the case
     /// where the index of the tab has changed (such as after deletion).
+    @MainActor
     func selectTab(_ tab: Tab?, previous: Tab? = nil) {
+        assert(Thread.isMainThread)
         // Fallback everywhere to selectedTab if no previous tab
         let previous = previous ?? selectedTab
         if isPDFRefactorEnabled {
@@ -976,6 +977,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
                                   forKey: PrefsKeys.LastSessionWasPrivate)
     }
 
+    @MainActor
     private func removeAllPrivateTabs() {
         // reset the selectedTabIndex if we are on a private tab because we will be removing it.
         if selectedTab?.isPrivate ?? false {
@@ -985,7 +987,8 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
             tab.close()
             delegates.forEach { $0.get()?.tabManager(self, didRemoveTab: tab, isRestoring: false) }
         }
-        privateConfiguration = TabManagerImplementation.makeWebViewConfig(isPrivate: true, prefs: profile.prefs)
+        // TODO: Why do we need to recreate the private configuration
+        privateConfiguration = configurationProvider.configuration(from: profile.prefs, isPrivate: true).webViewConfiguration
         tabs = normalTabs
     }
 
@@ -1010,6 +1013,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         store.dispatch(action)
     }
 
+    @MainActor
     private func selectTabWithSession(tab: Tab, sessionData: Data?) {
         assert(Thread.isMainThread, "Currently expected to be called only on main thread.")
         let configuration: WKWebViewConfiguration = tab.isPrivate ? self.privateConfiguration : self.configuration
@@ -1090,7 +1094,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         backupCloseTabs = [Tab]()
     }
 
+    @MainActor
     func clearAllTabsHistory() {
+        assert(Thread.isMainThread)
         guard let selectedTab = selectedTab, let url = selectedTab.url else { return }
 
         for tab in tabs where tab !== selectedTab {
@@ -1132,6 +1138,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         commitChanges()
     }
 
+    @MainActor
     func startAtHomeCheck() -> Bool {
         let startAtHomeManager = StartAtHomeHelper(prefs: profile.prefs, isRestoringTabs: !tabRestoreHasFinished)
 
@@ -1164,7 +1171,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         }
     }
 
+    @MainActor
     func switchPrivacyMode() -> SwitchPrivacyModeResult {
+        assert(Thread.isMainThread)
         var result = SwitchPrivacyModeResult.usedExistingTab
         guard let selectedTab = selectedTab else { return result }
         let nextSelectedTab: Tab?
@@ -1187,7 +1196,9 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         return result
     }
 
+    @MainActor
     func addPopupForParentTab(profile: any Profile, parentTab: Tab, configuration: WKWebViewConfiguration) -> Tab {
+        assert(Thread.isMainThread)
         let popup = Tab(profile: profile,
                         isPrivate: parentTab.isPrivate,
                         windowUUID: windowUUID)
@@ -1213,6 +1224,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
     }
 
     /// Note: Inserts AND configures the given tab.
+    @MainActor
     private func configureTab(
         _ tab: Tab,
         request: URLRequest?,
@@ -1222,6 +1234,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
         isPopup: Bool = false,
         requiredConfiguration: WKWebViewConfiguration? = nil
     ) {
+        assert(Thread.isMainThread)
         // If network is not available webView(_:didCommit:) is not going to be called
         // We should set request url in order to show url in url bar even no network
         tab.url = request?.url
@@ -1348,6 +1361,7 @@ class TabManagerImplementation: NSObject, TabManager, FeatureFlaggable {
 
 // MARK: - Notifiable
 extension TabManagerImplementation: Notifiable {
+    @MainActor
     func handleNotifications(_ notification: Notification) {
         switch notification.name {
         case UIApplication.willResignActiveNotification:

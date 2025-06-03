@@ -66,6 +66,7 @@ class WallpaperSettingsViewModel: FeatureFlaggable {
         return wallpaperCollections[safe: section]?.wallpapers.count ?? 0
     }
 
+    @MainActor
     func sectionHeaderViewModel(for sectionIndex: Int,
                                 dismissView: @escaping (() -> Void)
     ) -> WallpaperSettingsHeaderViewModel? {
@@ -155,6 +156,7 @@ class WallpaperSettingsViewModel: FeatureFlaggable {
         wallpaperManager.removeUnusedAssets()
     }
 
+    @MainActor
     func selectHomepageTab() {
         let homepageTab = getHomepageTab(isPrivate: tabManager.selectedTab?.isPrivate ?? false)
 
@@ -163,6 +165,7 @@ class WallpaperSettingsViewModel: FeatureFlaggable {
 
     /// Get mostRecentHomePage used if none is available we add and select a new homepage Tab
     /// - Parameter isPrivate: If private mode is selected
+    @MainActor
     private func getHomepageTab(isPrivate: Bool) -> Tab {
         guard let homepageTab = tabManager.getMostRecentHomepageTab() else {
             return tabManager.addTab(nil, afterTab: nil, isPrivate: isPrivate)

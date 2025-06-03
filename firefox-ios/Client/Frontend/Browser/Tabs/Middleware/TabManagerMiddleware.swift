@@ -38,21 +38,25 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         self.tabsPanelTelemetry = TabsPanelTelemetry(gleanWrapper: gleanWrapper, logger: logger)
     }
 
+    // TODO: It would be better here to just make the tabs panel provider @MainActor as well
+    // but that requires making the store @MainActor and would be a wider sweeping change
     lazy var tabsPanelProvider: Middleware<AppState> = { state, action in
-        if let action = action as? TabPeekAction {
-            self.resolveTabPeekActions(action: action, state: state)
-        } else if let action = action as? RemoteTabsPanelAction {
-            self.resolveRemoteTabsPanelActions(action: action, state: state)
-        } else if let action = action as? TabTrayAction {
-            self.resolveTabTrayActions(action: action, state: state)
-        } else if let action = action as? TabPanelViewAction {
-            self.resolveTabPanelViewActions(action: action, state: state)
-        } else if let action = action as? MainMenuAction {
-            self.resolveMainMenuActions(with: action, appState: state)
-        } else if let action = action as? ScreenshotAction {
-            self.resolveScreenshotActions(action: action, state: state)
-        } else {
-            self.resolveHomepageActions(with: action)
+        Task { @MainActor in
+            if let action = action as? TabPeekAction {
+                self.resolveTabPeekActions(action: action, state: state)
+            } else if let action = action as? RemoteTabsPanelAction {
+                self.resolveRemoteTabsPanelActions(action: action, state: state)
+            } else if let action = action as? TabTrayAction {
+                self.resolveTabTrayActions(action: action, state: state)
+            } else if let action = action as? TabPanelViewAction {
+                self.resolveTabPanelViewActions(action: action, state: state)
+            } else if let action = action as? MainMenuAction {
+                self.resolveMainMenuActions(with: action, appState: state)
+            } else if let action = action as? ScreenshotAction {
+                self.resolveScreenshotActions(action: action, state: state)
+            } else {
+                self.resolveHomepageActions(with: action)
+            }
         }
     }
 
@@ -97,6 +101,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         }
     }
 
+    @MainActor
     private func resolveRemoteTabsPanelActions(action: RemoteTabsPanelAction, state: AppState) {
         switch action.actionType {
         case RemoteTabsPanelActionType.openSelectedURL:
@@ -140,6 +145,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         }
     }
 
+    @MainActor
     private func resolveTabPanelViewActions(action: TabPanelViewAction, state: AppState) {
         switch action.actionType {
         case TabPanelViewActionType.tabPanelDidLoad:
@@ -258,6 +264,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         return (tabManager.normalTabs.count < 100) ? tabManager.normalTabs.count.description : "\u{221E}"
     }
 
+    @MainActor
     private func openSelectedURL(url: URL, showOverlay: Bool, windowUUID: WindowUUID) {
         TelemetryWrapper.recordEvent(category: .action,
                                      method: .open,
@@ -355,7 +362,9 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
     /// - Parameters:
     ///   - urlRequest: URL request to load
     ///   - isPrivate: if the tab should be created in private mode or not
+    @MainActor
     private func addNewTab(with urlRequest: URLRequest?, isPrivate: Bool, showOverlay: Bool, for uuid: WindowUUID) {
+        assert(Thread.isMainThread)
         // TODO: Legacy class has a guard to cancel adding new tab if dragging was enabled,
         // check if change is still needed
         let tabManager = tabManager(for: uuid)
@@ -501,6 +510,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
     }
 
     /// Handles undoing the close tab action, gets the backup tab from `TabManager`
+    @MainActor
     private func undoCloseTab(state: AppState, uuid: WindowUUID) {
         toastTelemetry.undoClosedSingleTab()
         let tabManager = tabManager(for: uuid)
@@ -538,7 +548,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
             let privateCount = tabManager.privateTabs.count
             await tabManager.removeAllTabs(isPrivateMode: tabsState.isPrivateMode)
 
-            ensureMainThread { [self] in
+            await MainActor.run {
                 let model = getTabsDisplayModel(for: tabsState.isPrivateMode, uuid: uuid)
                 let action = TabPanelMiddlewareAction(tabDisplayModel: model,
                                                       windowUUID: uuid,
@@ -583,6 +593,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
     }
 
     /// Add a new tab when privateMode is selected and all or last normal tabs/tab are/is going to be closed
+    @MainActor
     private func addNewTabIfPrivate(uuid: WindowUUID) {
         let tabManager = tabManager(for: uuid)
         if let selectedTab = tabManager.selectedTab, selectedTab.isPrivate {
@@ -590,6 +601,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         }
     }
 
+    @MainActor
     private func undoCloseAllTabs(uuid: WindowUUID) {
         toastTelemetry.undoClosedAllTabs()
         let tabManager = tabManager(for: uuid)
@@ -681,6 +693,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         }
     }
 
+    @MainActor
     private func undoCloseInactiveTab(uuid: WindowUUID) {
         let windowTabManager = self.tabManager(for: uuid)
         guard windowTabManager.backupCloseTab != nil else { return }
@@ -693,10 +706,12 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
         store.dispatch(refreshAction)
     }
 
+    @MainActor
     private func didTapLearnMoreAboutPrivate(with urlRequest: URLRequest, uuid: WindowUUID) {
         addNewTab(with: urlRequest, isPrivate: true, showOverlay: false, for: uuid)
     }
 
+    @MainActor
     private func selectTab(
         for tabUUID: TabUUID,
         uuid: WindowUUID,
@@ -953,6 +968,7 @@ class TabManagerMiddleware: BookmarksRefactorFeatureFlagProvider,
     }
 
     // MARK: - Homepage Related Actions
+    @MainActor
     private func resolveHomepageActions(with action: Action) {
         switch action.actionType {
         case HomepageActionType.viewWillAppear,
